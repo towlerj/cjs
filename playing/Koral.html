@@ -1,0 +1,92 @@
+<!DOCTYPE HTML>
+<html lang="en"> 
+<meta charset="utf-8"> 
+	<head>
+	<title>Koral - a fleeting moment of DejaVu is never repeated</title>
+	<style type="text/css"> 
+		body { 
+			background-color:black; 
+			margin:0px; 
+			overflow : hidden; 
+		}
+		</style> 
+	</head>
+	
+	<body>
+		<script src="js/jt-tools.js"></script>
+		<script>
+		
+		var canvas = document.createElement('canvas');
+		document.body.appendChild(canvas);
+		canvas.width = window.innerWidth;
+		canvas.height = window.innerHeight;
+		
+		var ctx = canvas.getContext('2d');
+		
+		var particles = [];
+		var gen=1;
+		var ROT_SPEED = Math.PI/10;
+		var F_RATE = 200;
+		var minA = 0.01;
+		var maxA = 0.1;
+		var multS = 100;
+		var multL = 75;
+		var H_MULT = randomRange(1,360);
+		
+		ctx.translate(ctx.width/2,ctx.height/2); 
+		
+		setInterval(draw, 1000/F_RATE);
+		
+		function draw(){
+			gen++;
+			
+			if (gen>1600){
+				gen=0;
+				H_MULT = randomRange(1,360);
+			}
+			
+			var p = new Particle();
+			particles.push(p);
+			if (particles.length>160){
+				particles.shift();
+			}
+			for (var i = 0; i<particles.length;i++){
+				p = particles[i];	
+				ctx.fillStyle = p.colour ;
+				ctx.fillRect(p.x,p.y,p.size,p.size);
+							
+				p.x+=p.xVel;
+				p.y+=p.yVel;
+				p.xVel *= p.xVelM;
+				p.yVel *= p.yVelM;
+				p.size*=1.01;
+
+			}
+			ctx.rotate(ROT_SPEED);
+		}
+		
+
+
+		function Particle(){
+			this.x = canvas.width/randomRange(-4,4);
+			this.y = canvas.height/randomRange(-4,4);
+			this.xVel = randomRange(-10,10);
+			this.yVel = randomRange(-10,10);
+			this.size = randomRange(0,20);
+			this.xVelM = randomRange(0.75,1);
+			this.yVelM = randomRange(0.75,1);
+
+			// This is actually wrong - tan(gen) gives us way out of range numbers, but it also means most of our colours are in the red range (presumably due to 
+				// the rate of increase in tan. Which gives us this nice Klee like effect.
+			this.colour = 'hsla(' + Math.abs(Math.sin(gen)) * H_MULT + ',' + Math.abs(Math.sin(gen) * multS) + '%,' + (Math.cos(gen) * multL) + 25 + '%,' + randomRange(minA,maxA) + ')';
+		}
+
+		
+
+
+		</script>			
+	</body>
+	
+	
+</html>
+	

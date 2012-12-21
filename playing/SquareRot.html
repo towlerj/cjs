@@ -1,0 +1,87 @@
+<!DOCTYPE HTML>
+<html lang="en"> 
+<meta charset="utf-8"> 
+	<head>
+	<title>Square Growth</title>
+	<style type="text/css"> 
+		body { 
+			background-color:black; 
+			margin:0px; 
+			overflow : hidden; 
+		}
+		</style> 
+	</head>
+	
+	<body>
+		<script>
+		
+		var canvas = document.createElement('canvas');
+		document.body.appendChild(canvas);
+		canvas.width = window.innerWidth;
+		canvas.height = window.innerHeight;
+		
+		var ctx = canvas.getContext('2d');
+		
+		var particles = [];
+		var gen=1;
+		var ROT_SPEED = Math.PI/100;
+		var F_RATE = 600;
+		var minA = 0.01;
+		var maxA = 0.1;
+		var multS = 100;
+		var multL = 75;
+		
+		
+		ctx.translate(ctx.width/2,ctx.height/2); 
+		
+		setInterval(draw, 1000/F_RATE);
+		
+		function draw(){
+			gen++;
+			var p = new Particle();
+			particles.push(p);
+			if (particles.length>160){
+				particles.shift();
+			}
+			for (var i = 0; i<particles.length;i++){
+				p = particles[i];	
+				ctx.fillStyle = p.colour ;
+				ctx.fillRect(p.x,p.y,p.size,p.size);			
+				p.x+=p.xVel;
+				p.y+=p.yVel;
+				p.xVel *= p.xVelM;
+				p.yVel *= p.yVelM;
+				p.size*=1.01;
+			}
+			
+
+			ctx.rotate(ROT_SPEED);
+			
+			
+		}
+		
+		function randomRange(min, max){
+			return (Math.random()*(max-min)) + min;
+		}
+
+		function Particle(){
+			this.x = canvas.width/randomRange(-4,4);
+			this.y = canvas.height/randomRange(-4,4);
+			this.xVel = randomRange(-10,10);
+			this.yVel = randomRange(-10,10);
+			this.size = randomRange(0,20);
+			this.xVelM = randomRange(0.75,1);
+			this.yVelM = randomRange(0.75,1);
+//			this.colour = 'hsla(' + randomRange(0,360) + ',' + Math.abs(Math.sin(gen) * multS) + '%,' + Math.cos(gen) * multL + '%,' + randomRange(minA,maxA) + ')';
+			this.colour = 'hsla(' + gen + ',' + Math.abs(Math.sin(gen) * multS) + '%,' + (Math.cos(gen) * multL) + 25 + '%,' + randomRange(minA,maxA) + ')';
+		}
+
+		
+
+
+		</script>			
+	</body>
+	
+	
+</html>
+	
