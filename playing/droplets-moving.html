@@ -30,11 +30,12 @@ var canvas = document.createElement( 'canvas' ),
 
 var gen = 1;
 
-
-var fRate = 30; // frame rate
+var jDist = 50; // max distance we'l join
+var fRate = 60; // frame rate
 var lAl = .03; // line transparency
-var MAX_PARTICLES = 10000; // max particles
-var lineX = 0 ; //Line X position
+var cCa = 500000; // The rest timer
+var MAX_PARTICLES=500; // max [articles]
+
 var pRem = 1; // steps to start removing
 var pAdd = MAX_PARTICLES; // steps to start adding
 
@@ -61,19 +62,28 @@ function loop() {
 	
 	gen++;
 
-	lineX+=10;
-	if (lineX>=canvas.width){
-		lineX=0;
-	}
 
 	c.clearRect(0,0,canvas.width, canvas.height); 
+//	c.fillStyle = "rgba(0,0,0,0.01)"; 
+	
+	
+	// #####################
+	
+	for(var i=0; i<particles.length; i++) {
+		
+		var p = particles[i]; 
+		p.update(canvas); 
+		p.draw(c); 
+		
+	}
 
 
-		for(var i=0; i<particles.length; i++) {
-			var p = particles[i];
-			p.update(canvas); 
-			p.draw(c); 
-		}
+	
+	
+	
+	
+
+	
 	
 }
 
@@ -84,54 +94,40 @@ function Particle() {
 	var pos = this.pos = new Vector2(0,0); 
 	var vel = this.vel = new Vector2(0,0); 
 	var oldPos = this.oldPos = [];
-	var mAl;
-	var hC = randomRange(1,359);
-	var mSat=100;
-	var mLi=75;
 
-//	var hC = this.pos.x;	
+	
 	
 	this.update = function(canvas) { 
+		
+		
+		pos.plusEq(vel); 
+		
+		if(pos.x<0) pos.x = canvas.width; 
+		else if(pos.x>canvas.width) pos.x = 0; 
+		if(pos.y<0) pos.y = canvas.height; 
+		else if(pos.y>canvas.height) pos.y = 0; 	
+		
 	};
 	
-	
 	this.draw = function(c) { 
-
+		
+		var mSq = 1;
 		var mSi = 2;
-//		var mAl = 1;
+		var mAl = 1;
 		var rR = 50;
+		var hC = 0;
+		hC = randomRange(gen-rR,gen+rR);
 		
+		c.strokeStyle = 'hsla(' + hC + ',100%,50%,' + mAl + ')'; 
+		c.beginPath(); 
+		c.fillStyle = 'hsla(' + hC + ',100%,50%,' + mAl + ')';
+//		c.fillRect(pos.x, pos.y, 10,10)
 
-
-		var mAlD = 0.0005; // delta change in alpha
-		var mAlDR = 0.001; // allow us to have a rangeRandom for the delta
-//		hC = randomRange(gen-rR,gen+rR);
-
+//		c.arc(pos.x + randomRange(-mSq,mSq), pos.y + randomRange(-mSq,mSq), mSi + randomRange(-mSi-(mSi/10), mSi), 0, Math.PI*2, true); 
+		c.arc(pos.x, pos.y, mSi, 0, Math.PI*2, true); 
+		c.fill();
+		c.stroke(); 
 		
-
-		if (Math.round(pos.x) == Math.round(lineX)){
-			mAl = 1;
-			mSat = 100;
-			mLi = 100;
-		} else {
-			mAl += -mAlD + randomRange(mAlDR, -mAlDR);
-			mSat += -.5;
-			mLi += -.5;
-		}
-		
-		if (mAl > 0.01){
-//			c.strokeStyle = 'hsla(' + hC + ',' + mSat + '%,' + mLi + '%,' + mAl + ')'; 
-			c.strokeStyle = 'hsla(' + hC + ', ' + mSat + '%, ' + mLi + '%,' + mAl + ')'; 
-			c.beginPath(); 
-			c.fillStyle = c.strokeStyle;
-	//		c.fillRect(pos.x, pos.y, 10,10)
-
-	//		c.arc(pos.x + randomRange(-mSq,mSq), pos.y + randomRange(-mSq,mSq), mSi + randomRange(-mSi-(mSi/10), mSi), 0, Math.PI*2, true); 
-			c.arc(pos.x, pos.y, mSi, 0, Math.PI*2, true); 
-			c.fill();
-			c.stroke();
-		}
-
 	};
 	
 	
