@@ -31,15 +31,14 @@ var canvas = document.createElement( 'canvas' ),
 var gen = 1;
 
 
-var fRate = 30; // frame rate
-var lAl = .03; // line transparency
-var MAX_PARTICLES = 10000; // max particles
+var fRate = 120; // frame rate
+var MAX_PARTICLES = 1000; // max particles
 var lineX = 0 ; //Line X position
-var pRem = 1; // steps to start removing
 var pAdd = MAX_PARTICLES; // steps to start adding
+var lineStep = 10;
 
 
-canvas.width = window.innerWidth; 
+canvas.width =  window.innerWidth; 
 canvas.height = window.innerHeight; 
 document.body.appendChild(canvas);
 
@@ -47,11 +46,11 @@ c = context;
 
 var particles = []; 
 
-for(var i=0;i<MAX_PARTICLES; i++) {
+for(var i=0;i<=MAX_PARTICLES; i++) {
 	
 	var particle = new Particle();
-	particle.pos.reset(Math.random()*canvas.width, Math.random()*canvas.height);  
-	particle.vel.reset(randomRange(-3,3), randomRange(-3,3)); 
+	particle.pos.reset(Math.round(randomRange(canvas.width-2,1)), Math.round(randomRange(1,canvas.height-2)));  
+//	particle.vel.reset(randomRange(-3,3), randomRange(-3,3)); 
 	particles.push(particle);
 }
 
@@ -61,12 +60,12 @@ function loop() {
 	
 	gen++;
 
-	lineX+=10;
+	lineX+=lineStep;
 	if (lineX>=canvas.width){
 		lineX=0;
 	}
 
-	c.clearRect(0,0,canvas.width, canvas.height); 
+//	c.clearRect(0,0,canvas.width, canvas.height); 
 
 
 		for(var i=0; i<particles.length; i++) {
@@ -82,9 +81,8 @@ function loop() {
 function Particle() {
 	
 	var pos = this.pos = new Vector2(0,0); 
-	var vel = this.vel = new Vector2(0,0); 
-	var oldPos = this.oldPos = [];
-	var mAl;
+
+	var mAl=0;
 	var hC = randomRange(1,359);
 	var mSat=100;
 	var mLi=75;
@@ -97,19 +95,19 @@ function Particle() {
 	
 	this.draw = function(c) { 
 
-		var mSi = 2;
+		var mSi = 5;
 //		var mAl = 1;
 		var rR = 50;
 		
 
 
 		var mAlD = 0.0005; // delta change in alpha
-		var mAlDR = 0.001; // allow us to have a rangeRandom for the delta
-//		hC = randomRange(gen-rR,gen+rR);
-
+		var mAlDR = 0.0005; // allow us to have a rangeRandom for the delta
+		hC = randomRange(gen-rR,gen+rR);
+//		hC = 1;
 		
 
-		if (Math.round(pos.x) == Math.round(lineX)){
+		if (Math.round(pos.x) <= Math.round(lineX) && Math.round(pos.x) + lineStep +1  >= Math.round(lineX) ) {
 			mAl = 1;
 			mSat = 100;
 			mLi = 100;
